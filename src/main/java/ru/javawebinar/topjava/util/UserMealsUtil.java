@@ -7,9 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.time.chrono.ChronoLocalDateTime;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class UserMealsUtil {
@@ -30,7 +28,7 @@ public class UserMealsUtil {
         System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
 
-    public static boolean isCaloriesPerDay(List<UserMeal> meals, LocalDate date, int caloriesPerDay) {
+    public static boolean isExcessPerDay(List<UserMeal> meals, LocalDate date, int caloriesPerDay) {
         int count = 0;
         for (UserMeal meal: meals) {
             if(meal.getDateTime().toLocalDate().isEqual(date)) {
@@ -42,14 +40,14 @@ public class UserMealsUtil {
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
 
-        List<UserMealWithExcess> list = new ArrayList<>();
+        List<UserMealWithExcess> listOfCaloriesPerDay = new ArrayList<>();
         for (UserMeal meal : meals) {
             LocalTime time = meal.getDateTime().toLocalTime();
             if (TimeUtil.isBetweenInclusive(time, startTime, endTime)) {
-                list.add(new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), isCaloriesPerDay(meals, meal.getDateTime().toLocalDate(), caloriesPerDay)));
+                listOfCaloriesPerDay.add(createUserMealWithExcess(meal, isExcessPerDay(meals, meal.getDateTime().toLocalDate(), caloriesPerDay)));
             }
         }
-        return list;
+        return listOfCaloriesPerDay;
     }
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
@@ -63,7 +61,7 @@ public class UserMealsUtil {
                 .collect(Collectors.toList());
     }
 
-    public static UserMealWithExcess createUserMealWithExcess(UserMeal meal, boolean isCaloriesPerDay) {
-        return new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), isCaloriesPerDay);
+    public static UserMealWithExcess createUserMealWithExcess(UserMeal meal, boolean isExcess) {
+        return new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), isExcess);
     }
 }
