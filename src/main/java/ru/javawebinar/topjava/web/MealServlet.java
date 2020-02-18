@@ -13,13 +13,12 @@ import java.io.IOException;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
-   // private static final Logger log = getLogger(MealServlet.class);
         private static final Logger LOG = getLogger(MealServlet.class);
     
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         LOG.debug("redirect to meals");
-      //  req.setAttribute("mealList", MealsUtil.);
+        req.setAttribute("mealList", MealsUtil.getWithExceeded(MealsUtil.MEAL_LIST, 2000));
         req.getRequestDispatcher("/meals.jsp").forward(req, resp);
 
 
